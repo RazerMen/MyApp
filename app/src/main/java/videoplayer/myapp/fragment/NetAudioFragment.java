@@ -1,9 +1,11 @@
 package videoplayer.myapp.fragment;
 
+import android.content.Intent;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -20,14 +22,12 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import videoplayer.myapp.R;
+import videoplayer.myapp.ShowImageAndGifActivity;
 import videoplayer.myapp.adapter.NetAudioFragmentAdapter;
 import videoplayer.myapp.base.BaseFragment;
 import videoplayer.myapp.base.NetAudioBean;
 import videoplayer.myapp.utils.CacheUtils;
 import videoplayer.myapp.utils.Constant;
-
-import static videoplayer.myapp.R.id.listview;
-import static videoplayer.myapp.R.id.progressbar;
 
 /**
  * Created by 猫奴 on 2017/1/16.
@@ -37,10 +37,10 @@ public class NetAudioFragment extends BaseFragment {
 
     private static final String TAG = NetAudioFragment.class.getSimpleName();
 
-    @Bind(listview)
+    @Bind(R.id.listview)
     ListView listView;
 
-    @Bind(progressbar)
+    @Bind(R.id.progressbar)
     ProgressBar progressBar;
 
     @Bind(R.id.tv_nomedia)
@@ -55,14 +55,32 @@ public class NetAudioFragment extends BaseFragment {
         View view = View.inflate(mContext, R.layout.fragment_net_audio, null);
         ButterKnife.bind(this, view);
 
-        initClick();
+        //设置点击事件
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+
+                NetAudioBean.ListBean listEntity = datas.get(position);
+                if(listEntity !=null ){
+                    //3.传递视频列表
+                    Intent intent = new Intent(mContext,ShowImageAndGifActivity.class);
+                    if(listEntity.getType().equals("gif")){
+                        String url = listEntity.getGif().getImages().get(0);
+                        intent.putExtra("url",url);
+                        mContext.startActivity(intent);
+                    }else if(listEntity.getType().equals("image")){
+                        String url = listEntity.getImage().getBig().get(0);
+                        intent.putExtra("url",url);
+                        mContext.startActivity(intent);
+                    }
+                }
+            }
+        });
+
         return view;
-
     }
 
-    private void initClick() {
-
-    }
 
     @Override
     public void initData() {
@@ -104,8 +122,11 @@ public class NetAudioFragment extends BaseFragment {
         });
     }
 
-/*    *//**
+/*    */
+
+    /**
      * 使用Gson解析json数据
+     *
      * @param json
      * @return
      *//*
@@ -118,19 +139,19 @@ public class NetAudioFragment extends BaseFragment {
     //适配器代码
     private void processData(String json) {
         NetAudioBean netAudioBean = paraseJson(json);
-        LogUtil.e(netAudioBean.getList().get(0).getText()+"-----------");
+        LogUtil.e(netAudioBean.getList().get(0).getText() + "-----------");
 
         datas = netAudioBean.getList();
 
-        if(datas != null && datas.size() >0){
+        if (datas != null && datas.size() > 0) {
             //有视频
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 tvNomedia.setVisibility(View.GONE);
             }
             //设置适配器
-            myAdapter = new NetAudioFragmentAdapter(mContext,datas);
+            myAdapter = new NetAudioFragmentAdapter(mContext, datas);
             listView.setAdapter(myAdapter);
-        }else{
+        } else {
             //没有视频
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 tvNomedia.setVisibility(View.VISIBLE);
@@ -142,12 +163,13 @@ public class NetAudioFragment extends BaseFragment {
 
     /**
      * json解析数据
+     *
      * @param json
      * @return
      */
     private NetAudioBean paraseJson(String json) {
 
-        NetAudioBean netAudioBean = new Gson().fromJson(json,NetAudioBean.class);
+        NetAudioBean netAudioBean = new Gson().fromJson(json, NetAudioBean.class);
         return netAudioBean;
     }
 
@@ -158,3 +180,7 @@ public class NetAudioFragment extends BaseFragment {
         ButterKnife.unbind(this);
     }
 }
+
+
+
+
