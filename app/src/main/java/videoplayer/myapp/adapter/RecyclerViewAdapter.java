@@ -136,12 +136,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter <RecyclerView.View
     }
 
     /**
-     * 返回多少种类型
+     * 返回总数据
      * @return
      */
     @Override
     public int getItemCount() {
-        return 5;
+        return datas.size();
     }
 
     /**
