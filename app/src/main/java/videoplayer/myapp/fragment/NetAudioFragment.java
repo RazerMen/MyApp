@@ -10,6 +10,8 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.cjj.MaterialRefreshLayout;
+import com.cjj.MaterialRefreshListener;
 import com.google.gson.Gson;
 
 import org.xutils.common.Callback;
@@ -45,8 +47,15 @@ public class NetAudioFragment extends BaseFragment {
 
     @Bind(R.id.tv_nomedia)
     TextView tvNomedia;
+
+    @Bind(R.id.refresh)
+    MaterialRefreshLayout refreshLayout;
+
     private List<NetAudioBean.ListBean> datas;
     private NetAudioFragmentAdapter myAdapter;
+    //是否加載更多
+    private boolean isLoadMore = false;
+
 //    private Notification.Builder tvNomedia;
 
     @Override
@@ -78,6 +87,10 @@ public class NetAudioFragment extends BaseFragment {
             }
         });
 
+        //监听下拉和上拉刷新
+
+        refreshLayout.setMaterialRefreshListener(new MyMaterialRefreshListener());
+
         return view;
     }
 
@@ -103,6 +116,15 @@ public class NetAudioFragment extends BaseFragment {
                 CacheUtils.putString(mContext, Constant.NET_AUDIO_URL, result);
                 LogUtil.e("onSuccess==" + result);
                 processData(result);
+
+
+                if(!isLoadMore) {
+                    //完成刷新
+                    refreshLayout.finishRefresh();
+                }else {
+                    //把上拉刷新隐藏
+                    refreshLayout.finishRefreshLoadMore();
+                }
             }
 
             @Override
@@ -178,6 +200,16 @@ public class NetAudioFragment extends BaseFragment {
     public void onRefrshData() {
         super.onRefrshData();
         ButterKnife.unbind(this);
+    }
+
+
+    class MyMaterialRefreshListener extends MaterialRefreshListener {
+        @Override
+        public void onRefresh(MaterialRefreshLayout materialRefreshLayout) {
+            isLoadMore = false;
+
+            getDataFromNet();
+        }
     }
 }
 
