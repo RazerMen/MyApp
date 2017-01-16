@@ -14,11 +14,15 @@ import com.cjj.MaterialRefreshLayout;
 import com.cjj.MaterialRefreshListener;
 import com.google.gson.Gson;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xutils.common.Callback;
 import org.xutils.common.util.LogUtil;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -28,6 +32,7 @@ import videoplayer.myapp.ShowImageAndGifActivity;
 import videoplayer.myapp.adapter.NetAudioFragmentAdapter;
 import videoplayer.myapp.base.BaseFragment;
 import videoplayer.myapp.base.NetAudioBean;
+import videoplayer.myapp.bean.MediaItem;
 import videoplayer.myapp.utils.CacheUtils;
 import videoplayer.myapp.utils.Constant;
 
@@ -38,6 +43,7 @@ import videoplayer.myapp.utils.Constant;
 public class NetAudioFragment extends BaseFragment {
 
     private static final String TAG = NetAudioFragment.class.getSimpleName();
+    private ArrayList<MediaItem> mediaItems;
 
     @Bind(R.id.listview)
     ListView listView;
@@ -55,6 +61,7 @@ public class NetAudioFragment extends BaseFragment {
     private NetAudioFragmentAdapter myAdapter;
     //是否加載更多
     private boolean isLoadMore = false;
+
 
 //    private Notification.Builder tvNomedia;
 
@@ -164,22 +171,31 @@ public class NetAudioFragment extends BaseFragment {
         LogUtil.e(netAudioBean.getList().get(0).getText() + "-----------");
 
         datas = netAudioBean.getList();
+        if(!isLoadMore) {
+            mediaItems = parsedJson(json);
+            if (datas != null && datas.size() > 0) {
+                //有视频
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    tvNomedia.setVisibility(View.GONE);
+                }
+                //设置适配器
+                myAdapter = new NetAudioFragmentAdapter(mContext, datas);
+                listView.setAdapter(myAdapter);
+            } else {
+                //没有视频
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    tvNomedia.setVisibility(View.VISIBLE);
+                }
+            }
+        }else {
 
-        if (datas != null && datas.size() > 0) {
-            //有视频
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                tvNomedia.setVisibility(View.GONE);
-            }
-            //设置适配器
-            myAdapter = new NetAudioFragmentAdapter(mContext, datas);
-            listView.setAdapter(myAdapter);
-        } else {
-            //没有视频
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                tvNomedia.setVisibility(View.VISIBLE);
-            }
+            //加载更多
+            ArrayList<MediaItem> mediaItem = parsedJson(json);
+            mediaItems.addAll(mediaItem);
+            //刷新适配器
+            myAdapter.notifyDataSetChanged();
+
         }
-
         progressBar.setVisibility(View.GONE);
     }
 
@@ -202,11 +218,64 @@ public class NetAudioFragment extends BaseFragment {
         ButterKnife.unbind(this);
     }
 
+    private ArrayList<MediaItem> parsedJson(String json) {
+        ArrayList<MediaItem> mediaItems = new ArrayList<>();
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+
+            JSONArray jsonArray = jsonObject.getJSONArray("trailers");
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+
+                MediaItem mediaItem = new MediaItem();
+
+                //添加到集合中
+                mediaItems.add(mediaItem);
+
+                JSONObject jsonObject1Item = (JSONObject) jsonArray.get(i);
+
+                String name = jsonObject1Item.optString("movieName");
+                mediaItem.setName(name);
+
+                String desc = jsonObject1Item.optString("videoTitle");
+                mediaItem.setDesc(desc);
+
+                String url = jsonObject1Item.optString("url");
+                mediaItem.setData(url);
+
+                String hightUrl = jsonObject1Item.optString("hightUrl");
+                mediaItem.setHeightUrl(hightUrl);
+
+                String coverImg = jsonObject1Item.optString("coverImg");
+                mediaItem.setImageUrl(coverImg);
+
+                int videoLength = jsonObject1Item.optInt("videoLength");
+                mediaItem.setDuration(videoLength);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return mediaItems;
+    }
+
 
     class MyMaterialRefreshListener extends MaterialRefreshListener {
         @Override
         public void onRefresh(MaterialRefreshLayout materialRefreshLayout) {
             isLoadMore = false;
+
+            getDataFromNet();
+        }
+
+        @Override
+        public void onRefreshLoadMore(MaterialRefreshLayout materialRefreshLayout) {
+
+            super.onRefreshLoadMore(materialRefreshLayout);
+
+            isLoadMore = true;
+
+            //Toast.makeText(mContext, "加载更多", Toast.LENGTH_SHORT).show();
 
             getDataFromNet();
         }
