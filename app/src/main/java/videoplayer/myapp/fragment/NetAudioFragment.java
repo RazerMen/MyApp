@@ -54,7 +54,13 @@ public class NetAudioFragment extends BaseFragment {
         Log.e(TAG, "网络音频UI被初始化了");
         View view = View.inflate(mContext, R.layout.fragment_net_audio, null);
         ButterKnife.bind(this, view);
+
+        initClick();
         return view;
+
+    }
+
+    private void initClick() {
 
     }
 

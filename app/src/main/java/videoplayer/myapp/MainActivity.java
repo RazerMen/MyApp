@@ -3,6 +3,7 @@ package videoplayer.myapp;
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
 import videoplayer.myapp.base.BaseFragment;
 import videoplayer.myapp.fragment.LocalAudioFragment;
 import videoplayer.myapp.fragment.LocalVideoFragment;
@@ -32,6 +34,9 @@ public class MainActivity extends AppCompatActivity {
     private Fragment tempFragment;
     private boolean isExit = false;
 
+    SensorManager sensorManager;
+    JCVideoPlayer.JCAutoFullscreenListener sensorEventListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
         initListener();
 
     }
+
+
 
     private void initListener() {
         //设置RadioGroup选中状态变化的监听
@@ -121,7 +128,11 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-
+    /**
+     * 解决安卓6.0以上版本不能读取外部存储权限的问题
+     * @param activity
+     * @return
+     */
     public static boolean isGrantExternalRW(Activity activity) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && activity.checkSelfPermission(
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){

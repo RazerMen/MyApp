@@ -70,7 +70,7 @@ public class BaseViewHolder {
 
         //设置点赞，踩,转发
 
-        tvShenheDingNumber.setText(mediaItem.getUp());
+        tvShenheDingNumber.setText(mediaItem.getUp()+ "");
         tvShenheCaiNumber.setText(mediaItem.getDown() + "");
         tvPostsNumber.setText(mediaItem.getForward() + "");
 
