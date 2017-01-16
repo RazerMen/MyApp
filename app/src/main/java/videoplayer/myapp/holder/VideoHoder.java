@@ -47,6 +47,11 @@ public class VideoHoder extends BaseViewHolder {
         tvCommantContext = (TextView) convertView.findViewById(R.id.tv_commant_context);
         jcvVideoplayer = (JCVideoPlayerStandard) convertView.findViewById(R.id.jcv_videoplayer);
     }
+
+    public VideoHoder(View convertView) {
+        super(convertView);
+    }
+
     public void setData(NetAudioBean.ListBean mediaItem) {
         super.setData(mediaItem);
 

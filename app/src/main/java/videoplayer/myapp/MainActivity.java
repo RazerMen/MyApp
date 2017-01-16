@@ -22,7 +22,7 @@ import videoplayer.myapp.fragment.LocalAudioFragment;
 import videoplayer.myapp.fragment.LocalVideoFragment;
 import videoplayer.myapp.fragment.NetAudioFragment;
 import videoplayer.myapp.fragment.NetVideoFragment;
-import videoplayer.myapp.fragment.RecyclenviewFragment;
+import videoplayer.myapp.fragment.RecyclerViewFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         fragments.add(new LocalAudioFragment());
         fragments.add(new NetAudioFragment());
         fragments.add(new NetVideoFragment());
-        fragments.add(new RecyclenviewFragment());
+        fragments.add(new RecyclerViewFragment());
     }
 
     @Override
