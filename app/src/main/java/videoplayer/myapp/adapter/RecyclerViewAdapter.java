@@ -1,8 +1,8 @@
 package videoplayer.myapp.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -22,19 +22,19 @@ import java.util.List;
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
 import videoplayer.myapp.R;
-import videoplayer.myapp.ShowImageAndGifActivity;
 import videoplayer.myapp.base.NetAudioBean;
 import videoplayer.myapp.utils.Utils;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by 猫奴 on 2017/1/16.
  */
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class RecyclerViewAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder> {
 
     private final Context mContext;
     private final List<NetAudioBean.ListBean> datas;
-
 
     /**
      * 视频
@@ -62,14 +62,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
      */
     private static final int TYPE_AD = 4;
 
-
     public RecyclerViewAdapter(Context mContext, List<NetAudioBean.ListBean> datas) {
         this.mContext = mContext;
         this.datas = datas;
     }
 
     /**
-     * 初始化布局和创建ViewHolder
+     * 初始化数据和创建ViewHodler
      * @param parent
      * @param viewType
      * @return
@@ -118,38 +117,30 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (getItemViewType(position) == TYPE_VIDEO) {
             VideoHoder videoHoder = (VideoHoder) holder;
-            //根据位置得到数据
-            NetAudioBean.ListBean listBean = datas.get(position);
-            //绑定数据
-            videoHoder.setData(listBean);
+            videoHoder.setData(datas.get(position));
         } else if (getItemViewType(position) == TYPE_IMAGE) {
             ImageHolder imageHolder = (ImageHolder) holder;
-            //绑定数据
             imageHolder.setData(datas.get(position));
         } else if (getItemViewType(position) == TYPE_TEXT) {
             TextHolder textHolder = (TextHolder) holder;
-            //绑定数据
             textHolder.setData(datas.get(position));
         } else if (getItemViewType(position) == TYPE_GIF) {
             GifHolder gifHolder = (GifHolder) holder;
-            //绑定数据
             gifHolder.setData(datas.get(position));
         } else {
             ADHolder adHolder = (ADHolder) holder;
-            //绑定数据
             adHolder.setData(datas.get(position));
         }
     }
 
     /**
-     * 返回的是总数据
+     * 返回多少种类型
      * @return
      */
     @Override
     public int getItemCount() {
-        return datas.size();
+        return 5;
     }
-
 
     /**
      * 根据对应的位置得到对应的类型
@@ -162,6 +153,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         //根据位置，从列表中得到一个数据对象
         NetAudioBean.ListBean listBean = datas.get(position);
         String type = listBean.getType();//得到类型
+        Log.e(TAG, "type===" + type);
         if ("video".equals(type)) {
             itemViewType = TYPE_VIDEO;
         } else if ("image".equals(type)) {
@@ -175,7 +167,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
         return itemViewType;
     }
-
 
     static class ADHolder extends RecyclerView.ViewHolder{
         TextView tvContext;
@@ -310,27 +301,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             tvShenheCaiNumber = (TextView) convertView.findViewById(R.id.tv_shenhe_cai_number);
             tvPostsNumber = (TextView) convertView.findViewById(R.id.tv_posts_number);
             llDownload = (LinearLayout) convertView.findViewById(R.id.ll_download);
-
-            //设置item的点击事件
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    NetAudioBean.ListBean listEntity = datas.get(getLayoutPosition());
-                    if(listEntity !=null ){
-                        //3.传递视频列表
-                        Intent intent = new Intent(mContext,ShowImageAndGifActivity.class);
-                        if(listEntity.getType().equals("gif")){
-                            String url = listEntity.getGif().getImages().get(0);
-                            intent.putExtra("url",url);
-                            mContext.startActivity(intent);
-                        }else if(listEntity.getType().equals("image")){
-                            String url = listEntity.getImage().getBig().get(0);
-                            intent.putExtra("url",url);
-                            mContext.startActivity(intent);
-                        }
-                    }
-                }
-            });
         }
 
         public void setData(NetAudioBean.ListBean mediaItem) {

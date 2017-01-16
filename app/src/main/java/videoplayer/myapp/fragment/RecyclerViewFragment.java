@@ -1,6 +1,7 @@
 package videoplayer.myapp.fragment;
 
 import android.os.Build;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -178,6 +179,9 @@ public class RecyclerViewFragment extends BaseFragment {
                 //设置适配器
                 myAdapter = new RecyclerViewAdapter(mContext, datas);
                 recyclerview.setAdapter(myAdapter);
+
+                //添加布局管理器
+                recyclerview.setLayoutManager(new LinearLayoutManager(mContext,LinearLayoutManager.VERTICAL,false));
             } else {
                 //没有视频
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
