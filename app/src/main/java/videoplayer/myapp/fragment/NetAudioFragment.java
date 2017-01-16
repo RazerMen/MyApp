@@ -137,10 +137,10 @@ public class NetAudioFragment extends BaseFragment {
 
 
 
-
-    @Override
-    public void onRefrshData() {
-        super.onRefrshData();
-        ButterKnife.unbind(this);
-    }
+//
+//    @Override
+//    public void onRefrshData() {
+//        super.onRefrshData();
+//        ButterKnife.unbind(this);
+//    }
 }
