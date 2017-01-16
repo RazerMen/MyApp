@@ -1,6 +1,7 @@
 package videoplayer.myapp.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +23,7 @@ import java.util.List;
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
 import videoplayer.myapp.R;
+import videoplayer.myapp.ShowImageAndGifActivity;
 import videoplayer.myapp.base.NetAudioBean;
 import videoplayer.myapp.utils.Utils;
 
@@ -301,6 +303,27 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter <RecyclerView.View
             tvShenheCaiNumber = (TextView) convertView.findViewById(R.id.tv_shenhe_cai_number);
             tvPostsNumber = (TextView) convertView.findViewById(R.id.tv_posts_number);
             llDownload = (LinearLayout) convertView.findViewById(R.id.ll_download);
+
+            //设置item的点击事件
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    NetAudioBean.ListBean listEntity = datas.get(getLayoutPosition());
+                    if(listEntity !=null ){
+                        //3.传递视频列表
+                        Intent intent = new Intent(mContext,ShowImageAndGifActivity.class);
+                        if(listEntity.getType().equals("gif")){
+                            String url = listEntity.getGif().getImages().get(0);
+                            intent.putExtra("url",url);
+                            mContext.startActivity(intent);
+                        }else if(listEntity.getType().equals("image")){
+                            String url = listEntity.getImage().getBig().get(0);
+                            intent.putExtra("url",url);
+                            mContext.startActivity(intent);
+                        }
+                    }
+                }
+            });
         }
 
         public void setData(NetAudioBean.ListBean mediaItem) {
