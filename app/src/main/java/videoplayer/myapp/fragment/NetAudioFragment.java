@@ -1,6 +1,5 @@
 package videoplayer.myapp.fragment;
 
-import android.app.Notification;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
@@ -45,10 +44,10 @@ public class NetAudioFragment extends BaseFragment {
     ProgressBar progressBar;
 
     @Bind(R.id.tv_nomedia)
-    TextView tv_nomedia;
+    TextView tvNomedia;
     private List<NetAudioBean.ListBean> datas;
     private NetAudioFragmentAdapter myAdapter;
-    private Notification.Builder tvNomedia;
+//    private Notification.Builder tvNomedia;
 
     @Override
     public View initView() {
@@ -99,23 +98,23 @@ public class NetAudioFragment extends BaseFragment {
         });
     }
 
-    /**
+/*    *//**
      * 使用Gson解析json数据
      * @param json
      * @return
-     */
+     *//*
 
     private List<NetAudioBean.ListBean> parsedJson(String json) {
         NetAudioBean netAudioBean = new Gson().fromJson(json,NetAudioBean.class);
         return netAudioBean.getList();
-    }
+    }*/
 
     //适配器代码
-    private void processData(String result) {
-        //NetAudioBean netAudioBean = paraseJson(result);
-//        LogUtil.e(netAudioBean.getList().get(0).getText()+"-----------");
-//
-//        datas = netAudioBean.getList();
+    private void processData(String json) {
+        NetAudioBean netAudioBean = paraseJson(json);
+        LogUtil.e(netAudioBean.getList().get(0).getText()+"-----------");
+
+        datas = netAudioBean.getList();
 
         if(datas != null && datas.size() >0){
             //有视频
@@ -135,12 +134,21 @@ public class NetAudioFragment extends BaseFragment {
         progressBar.setVisibility(View.GONE);
     }
 
+    /**
+     * json解析数据
+     * @param json
+     * @return
+     */
+    private NetAudioBean paraseJson(String json) {
+
+        NetAudioBean netAudioBean = new Gson().fromJson(json,NetAudioBean.class);
+        return netAudioBean;
+    }
 
 
-//
-//    @Override
-//    public void onRefrshData() {
-//        super.onRefrshData();
-//        ButterKnife.unbind(this);
-//    }
+    @Override
+    public void onRefrshData() {
+        super.onRefrshData();
+        ButterKnife.unbind(this);
+    }
 }
