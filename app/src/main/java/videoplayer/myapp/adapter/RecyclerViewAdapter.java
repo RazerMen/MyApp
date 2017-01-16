@@ -165,7 +165,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter <RecyclerView.View
         } else if ("gif".equals(type)) {
             itemViewType = TYPE_GIF;
         } else {
-            itemViewType = TYPE_AD;//广播
+            itemViewType = TYPE_AD;//广播广播
         }
         return itemViewType;
     }
